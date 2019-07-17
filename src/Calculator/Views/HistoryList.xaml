@@ -12,8 +12,6 @@
              x:Name="HistoryList"
              AutomationProperties.AutomationId="HistoryList"
              FlowDirection="LeftToRight"
-             Loaded="HistoryList_Loaded"
-             Unloaded="HistoryList_Unloaded"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -51,7 +49,7 @@
                                 Invoked="OnDeleteSwipeInvoked"/>
             </muxc:SwipeItems>
 
-            <MenuFlyout x:Key="HistoryContextMenu">
+            <MenuFlyout x:Name="HistoryContextMenu">
                 <MenuFlyoutItem x:Uid="DeleteHistoryMenuItem"
                                 Click="OnDeleteMenuItemClicked"
                                 Icon="Delete"/>
@@ -59,10 +57,8 @@
 
             <DataTemplate x:Key="HistoryItemTemplate" x:DataType="model:HistoryItemViewModel">
                 <muxc:SwipeControl RightItems="{StaticResource HistorySwipeItems}">
-                    <StackPanel Margin="0,6,4,6"
-                                Background="Transparent"
-                                ContextFlyout="{StaticResource HistoryContextMenu}">
-                        <TextBlock x:Name="exprTextBlock"
+                    <StackPanel Margin="0,6,4,6" Background="Transparent">
+                        <TextBlock x:Name="ExprTextBlock"
                                    Margin="0,0,0,4"
                                    HorizontalAlignment="Right"
                                    Style="{ThemeResource BodyTextBlockMediumStyle}"
@@ -71,7 +67,7 @@
                                    Text="{x:Bind Expression}"
                                    TextAlignment="Right"
                                    TextWrapping="Wrap"/>
-                        <TextBlock x:Name="resultTextBlock"
+                        <TextBlock x:Name="ResultTextBlock"
                                    HorizontalAlignment="Right"
                                    Style="{ThemeResource TitleTextBlockStyle}"
                                    FontWeight="SemiBold"
@@ -87,13 +83,13 @@
                    BasedOn="{StaticResource HistoryMemoryItemContainerStyle}"
                    TargetType="ListViewItem">
                 <Setter Property="Margin" Value="0,0,0,20"/>
+                <Setter Property="ContextFlyout" Value="{StaticResource HistoryContextMenu}"/>
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid x:Name="LayoutGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="{Binding RowHeight, ElementName=HistoryList, Mode=OneWay}"/>
         </Grid.RowDefinitions>
@@ -105,11 +101,10 @@
                         <AdaptiveTrigger MinWindowWidth="560"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="HistoryListRootGrid.(Grid.Row)" Value="1"/>
+                        <Setter Target="HistoryListRootGrid.(Grid.Row)" Value="0"/>
                         <Setter Target="HistoryListRootGrid.(Grid.RowSpan)" Value="2"/>
                         <Setter Target="HistoryListView.Padding" Value="0"/>
-                        <Setter Target="BackgroundShade.Opacity" Value="0"/>
-                        <Setter Target="CustomTitleBar.Height" Value="0"/>
+                        <Setter Target="BackgroundShade.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultLayout">
@@ -120,7 +115,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Border x:Name="BackgroundShade"
-                Grid.Row="2"
+                Grid.Row="1"
                 Margin="0,-1,0,0"
                 Padding="0"
                 HorizontalAlignment="Stretch"
@@ -129,7 +124,7 @@
                 BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
                 BorderThickness="{ThemeResource HighContrastThicknessTop}"/>
 
-        <Grid x:Name="HistoryListRootGrid" Grid.Row="2">
+        <Grid x:Name="HistoryListRootGrid" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -171,10 +166,5 @@
                     Content="&#xE74D;"
                     Visibility="{x:Bind Model.ItemSize, Mode=OneWay, Converter={StaticResource ItemSizeToVisibilityNegationConverter}}"/>
         </Grid>
-
-        <Border x:Name="CustomTitleBar"
-                Height="32"
-                HorizontalAlignment="Stretch"
-                Background="{ThemeResource TitleBarBackgroundTransparentBrush}"/>
     </Grid>
 </UserControl>
